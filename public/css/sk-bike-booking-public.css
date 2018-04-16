@@ -1,0 +1,62 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+.bikebooking-period .col-form-label {
+    padding-top: calc(.375rem + 1px);
+    padding-bottom: calc(.375rem + 1px);
+    margin-bottom: 0;
+    font-size: inherit;
+    line-height: 1.5;
+}
+
+.bikebooking-period .text-right{
+    text-align: right;
+}
+
+.bikebooking-period .form-info{
+    padding: 1em 0;
+}
+
+.bikebooking-period .bike-info{
+    margin-bottom: 1em;
+}
+
+.bikebooking-period .bike.fade{
+    opacity: .2;
+}
+
+.bikebooking-period h4 .btn{
+    float: right;
+}
+
+.bikebooking-period .bike{
+    border-bottom: 2px solid #f9f9fa;
+    padding-bottom: .5em;
+    margin-bottom: 1em;
+}
+
+.bikebooking-period .bike:last-child{
+    border-bottom: 0;
+}
+
+.bikebooking-period .accessorie-info{
+    margin-bottom: .5em;
+
+}
+.bikebooking-period .accessorie-info.selected{
+    border-top: 2px dashed #d44a00;
+    border-bottom: 2px dashed #d44a00;
+}
+
+.bikebooking-period .accessorie-info.selected{
+    border-top: 2px dashed #d44a00;
+    border-bottom: 2px dashed #d44a00;
+}
+
+.bikebooking-period .alert-inner{
+    background-color: #ffffff;
+    border-color: #ffdec7;
+    color: inherit;
+}
