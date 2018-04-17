@@ -91,10 +91,10 @@ class Sk_Bike_Booking_Public {
 			<?php endif;?>
 
 			<?php if ( isset( $_GET['status'] ) && $_GET['status'] === 'canceled' ) : ?>
-				<div class="bikebooking-status">
-					<h1 class="single-post__title"><?php _e('Din bokning är borttagen', 'bikebooking_textdomain') ;?></h1>
-					<p><?php _e('En bekräftelse på din avbokning är skickad till din e-postadress.', 'bikebooking_textdomain') ;?></p>
-				</div>
+			<div class="bikebooking-status">
+				<h1 class="single-post__title"><?php _e( 'Din bokning är borttagen', 'bikebooking_textdomain' ); ?></h1>
+				<p><?php _e( 'En bekräftelse på din avbokning är skickad till din e-postadress.', 'bikebooking_textdomain' ); ?></p>
+			</div>
 			<?php endif;?>
 
 		<?php
@@ -150,6 +150,7 @@ class Sk_Bike_Booking_Public {
 			wp_redirect( get_post_type_archive_link('bikebooking') . '?status=bike-unavailable' );
 			exit();
 		}
+
 
 		$accessorie_removed = false;
 		if( !empty( $booking[4] ) ){
@@ -460,12 +461,51 @@ class Sk_Bike_Booking_Public {
 
 
 	/**
+	 * User is not allowed to book a bike for coherent period.
+	 * User is not allowed to book more than one bike per period.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param $email
+	 * @param $period_start
+	 * @param $period_end
+	 *
+	 * @return bool
+	 */
+	private static function is_user_allowed( $email, $period_start, $period_end ) {
+		global $wpdb;
+
+		$period = $period_start . ':' . $period_end;
+
+		$result = $wpdb->get_var( $wpdb->prepare( "
+			SELECT posts.ID FROM $wpdb->posts as posts
+				LEFT JOIN wp_postmeta as meta1 ON ( posts.ID = meta1.post_id )
+		 		LEFT JOIN wp_postmeta as meta2 ON ( posts.ID = meta2.post_id )
+		 		WHERE 1=1 
+		 		AND posts.post_type = 'bikebooking' AND posts.post_status = 'publish'
+		 		AND meta1.meta_key = 'bb-email' AND meta1.meta_value = '%s'
+		 		AND meta2.meta_key = 'bb-period' AND meta2.meta_value = '%s'
+		 	GROUP BY posts.ID;
+		", $email, $period ) );
+
+		if ( $result ) {
+			return false;
+		}
+
+		return true;
+
+
+	}
+
+
+	/**
 	 * Check if a bike is available for a given period.
 	 *
 	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
 	 *
 	 * @param $bike_id
 	 * @param $period_start
+	 * @param $period_end
 	 *
 	 * @return bool
 	 */
@@ -539,6 +579,20 @@ class Sk_Bike_Booking_Public {
 
 	public function send_booking_email( $booker, $bike_id, $accessorie_id = '', $bike_period ){
 
+		$booking_period = explode(':', $bike_period);
+
+		// check if booking already exists for this user and this period.
+		if ( ! self::is_user_allowed( $booker['email'], $booking_period[0], $booking_period[1] ) ) {
+			$this->send_booking_email_rejected( $booker['email'] );
+			return false;
+		}
+
+		// check if booking already exists for this user and for the previous period.
+		if ( ! self::is_user_allowed( $booker['email'], date( 'Y-m-d', strtotime( $booking_period[0] . '- 2 week' ) ), date( 'Y-m-d', strtotime( $booking_period[1] . '- 2 week' ) ) ) ) {
+			$this->send_booking_email_rejected( $booker['email'] );
+			return false;
+		}
+
 
 		// save transient
 		$hash = base64_encode( $booker['email'] . ':' . $bike_id . ':' . $bike_period . ':' . $accessorie_id . ':' . $booker['name'] . ':' . $booker['phone'] . ':' . time() );
@@ -558,6 +612,25 @@ class Sk_Bike_Booking_Public {
 
 		// Send it.
 		wp_mail( $booker['email'], $subject, $body, $headers );
+
+
+	}
+
+
+	public function send_booking_email_rejected( $email ){
+
+		// Build email.
+		$subject = 'Din bokning av elcykel kan inte genomföras';
+
+		$body    = 'Din bokning kan inte genomföras på grund av någon av anledningarna nedan:<br><br>';
+		$body    .= '- Det går inte att boka fler än en cykel under samma period. <br>';
+		$body    .= '- Det går inte att boka cyklar i sammanhängande perioder. <br>';
+
+
+		$headers = implode( "\r\n", $this->email_headers );
+
+		// Send it.
+		wp_mail( $email, $subject, $body, $headers );
 
 
 	}

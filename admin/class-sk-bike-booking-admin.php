@@ -65,24 +65,24 @@ class Sk_Bike_Booking_Admin {
 
 		register_post_type( 'bikebooking',
 			array(
-				'labels'          => array(
+				'labels'               => array(
 					'name'          => __( 'Bokningar', 'sk_tivoli' ),
 					'singular_name' => __( 'Bokning', 'sk_tivoli' ),
 					'add_new'       => __( 'Ny bokning', 'sk_tivoli' ),
 					'add_new_item'  => __( 'Skapa ny bokning', 'sk_tivoli' ),
 					'edit_item'     => __( 'Redigera bokning', 'sk_tivoli' ),
 				),
-				'public'          => false,
-				'show_ui'         => true,
-				'menu_position'   => 6,
-				'menu_icon'       => 'dashicons-list-view',
-				'capability_type' => 'post',
-				'has_archive'     => true,
-				'hierarchical'    => false,
-				'rewrite'         => array( 'slug' => 'cykelbokningar'),
-				'supports'        => array( 'title' ),
-				'show_in_menu'  =>	'edit.php?post_type=bike',
-				'register_meta_box_cb' => array($this, 'booking_meta_box')
+				'public'               => true,
+				'show_ui'              => true,
+				'menu_position'        => 6,
+				'menu_icon'            => 'dashicons-list-view',
+				'capability_type'      => 'post',
+				'has_archive'          => true,
+				'hierarchical'         => false,
+				'rewrite'              => array( 'slug' => 'cykelbokningar' ),
+				'supports'             => array( 'title' ),
+				'show_in_menu'         => 'edit.php?post_type=bike',
+				'register_meta_box_cb' => array( $this, 'booking_meta_box' )
 
 
 			)

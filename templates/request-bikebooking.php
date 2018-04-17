@@ -1,6 +1,4 @@
 <?php sk_header(); ?>
-
-
 	<div class="container-fluid">
 
 		<div class="single-post__row">
