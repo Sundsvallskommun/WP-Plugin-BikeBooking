@@ -22,14 +22,38 @@
  */
 class Sk_Bike_Booking_Deactivator {
 
-	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
-	 *
-	 * @since    1.0.0
-	 */
+
 	public static function deactivate() {
+		self::remove_role();
+	}
+
+	/**
+	 * Remove custom role and caps for bike booking.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 */
+	public static function remove_role(){
+
+		// remove the custom role
+		remove_role( 'digitalboard_manager' );
+
+		$caps = Sk_Bike_Booking_Admin::get_caps();
+
+		// remove custom caps from administrator
+		$role = get_role( 'administrator');
+		foreach ( $caps as $cap => $value ) {
+			$role->remove_cap( $cap );
+		}
+
+		// remove custom caps from editor
+		/*
+		$role = get_role( 'editor');
+		foreach ( $caps as $cap => $value ) {
+			$role->remove_cap( $cap );
+		}
+		*/
+
 
 	}
 

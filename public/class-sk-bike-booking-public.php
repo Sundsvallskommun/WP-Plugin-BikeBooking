@@ -82,7 +82,7 @@ class Sk_Bike_Booking_Public {
 		?>
 			<?php if ( isset( $_GET['status'] ) && $_GET['status'] === 'confirmed' ) : ?>
 				<div class="bikebooking-status">
-					<h1 class="single-post__title">Din bokning är bekräftad</h1>
+					<h1 class="single-post__title"><?php _e('Din bokning är bekräftad', 'bikebooking_textdomain');?></h1>
 					<?php if ( isset( $_GET['accessorie'] ) && $_GET['accessorie'] === 'removed' ) : ?>
 						<p><?php _e('Tyvärr kan vi inte erbjuda den efterfrågade cykelvagnen då den redan har blivit bokad.', 'bikebooking_textdomain') ;?></p>
 					<?php endif;?>
@@ -247,7 +247,7 @@ class Sk_Bike_Booking_Public {
 	 *
 	 */
 	public function add_shortcode() {
-		add_shortcode( 'bike-booking', array( $this, 'output' ) );
+		add_shortcode( 'cykelbokning', array( $this, 'output' ) );
 	}
 
 
@@ -258,44 +258,88 @@ class Sk_Bike_Booking_Public {
 	 *
 	 * @return string
 	 */
-	public function output(){
+	public function output( $atts ){
+
+		$atts = shortcode_atts( array(
+			'startdatum'    => date_i18n('Y-m-d'),
+		), $atts );
+
+
 		//start buffering
 		ob_start();
 
-		$startdate = '2018-03-19';
-		//$startdate = '2018-03-27';
+		$period = self::get_period_interval( $atts['startdatum'] );
 
+		$i = 0;
+
+		foreach ( $period as $date ) {
+			$i ++;
+			$period       = $this->get_start_of_week_date( $date->format( 'Y-m-d' ) );
+			$period_start = $period->format( 'Y-m-d' );
+			$period_end   = $period->modify( '+11 days' )->format( 'Y-m-d' );
+			require( 'partials/sk-bike-booking-public-display.php' );
+		}
+
+		$output = ob_get_contents();
+		ob_get_clean();
+
+		return $output;
+	}
+
+
+	/**
+	 * get_period_interval
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param $startdate
+	 *
+	 * @return DatePeriod
+	 */
+	private function get_period_interval( $startdate ){
+
+		// is startdate on odd or even week
 		$period_start = 'even';
 		if( date('W', strtotime( $startdate ))%2 ){
 			$period_start = 'odd';
 		}
 
 
-		if( date('W')%2 && $period_start === 'odd'){
-			$start    = new DateTime();
+		$startdate = new DateTime( $startdate );
+		$today = new DateTime();
+
+		// add two weeks when we dont want to show current period.
+		$today->modify('+2 weeks');
+
+
+		// has start date already been passed.
+		if( $today > $startdate ){
+			$startdate = $today->format('Y-m-d');
 		}else{
-			$start    = new DateTime('-1 week');
+			$startdate = $startdate->format('Y-m-d');
 		}
 
-		$end      = new DateTime('+ 10 weeks');
+		// create the new start date for current available periods.
+		$start    = new DateTime($startdate);
+
+		if( $period_start === 'odd' ){
+			if ( intval( $start->format( 'W' ) ) % 2 === 0 ) {
+				$start->modify( '-1 week' );
+			}
+		}
+
+		// modify start date to be the first day of the week.
+		$start->modify('monday this week');
+
+		// create the end date for periods.
+		$end      = new DateTime( $start->format('Y-m-d') );
+		$end->modify('+ 26 weeks');
+
+
 		$interval = new DateInterval('P2W');
-		//$interval = new DateInterval('P10D');
 		$period   = new DatePeriod($start, $interval, $end);
-		$i = 0;
 
-		//echo $start;
-
-		foreach ( $period as $date ) : $i ++;
-			$period = $this->get_start_of_week_date( $date->format('Y-m-d') );
-			$period_start = $period->format('Y-m-d');
-			$period_end = $period->modify('+11 days')->format('Y-m-d');
-			require('partials/sk-bike-booking-public-display.php');
-			endforeach;
-
-		$output = ob_get_contents();
-		ob_get_clean();
-
-		return $output;
+		return $period;
 	}
 
 
@@ -349,33 +393,24 @@ class Sk_Bike_Booking_Public {
 	 *
 	 * @return array
 	 */
-	public static function get_accessories( $period = false ){
+	public static function get_accessories( $post_id, $period = false ){
 
-		$period = explode(':', $period );
-
-		$terms = get_terms( array(
-			'taxonomy'   => 'bike-accessories',
-			'hide_empty' => false,
-		) );
-
-		//Util::debug( $terms );
-
-		foreach ( $terms as $key => $term ) {
-
-			if( !self::is_accessorie_available( $term->term_id, $period[0], $period[1])){
-				unset($terms[$key]);
-			}else{
-				$image = get_field('bb-accessorie-image', $term->taxonomy . '_' . $term->term_id) ;
-				if(!empty( $image )){
-					$terms[$key]->image = $image['sizes']['medium'];
-				}else{
-					$terms[$key]->image = '';
+		$terms = get_the_terms( $post_id, 'bike-accessories' );
+		if(!empty($terms)) {
+			$period = explode(':', $period );
+			foreach ( $terms as $key => $term ) {
+				if ( ! self::is_accessorie_available( $term->term_id, $period[0], $period[1] ) ) {
+					unset( $terms[ $key ] );
+				} else {
+					$image = get_field( 'bb-accessorie-image', $term->taxonomy . '_' . $term->term_id );
+					if ( ! empty( $image ) ) {
+						$terms[ $key ]->image = $image['sizes']['medium'];
+					} else {
+						$terms[ $key ]->image = '';
+					}
 				}
 			}
 		}
-
-		//Util::debug( $terms );
-		
 		return $terms;
 
 	}
@@ -622,9 +657,9 @@ class Sk_Bike_Booking_Public {
 		// Build email.
 		$subject = 'Din bokning av elcykel kan inte genomföras';
 
-		$body    = 'Din bokning kan inte genomföras på grund av någon av anledningarna nedan:<br><br>';
+		$body    = 'Din bokning kunde inte genomföras på grund av någon av anledningarna nedan:<br><br>';
 		$body    .= '- Det går inte att boka fler än en cykel under samma period. <br>';
-		$body    .= '- Det går inte att boka cyklar i sammanhängande perioder. <br>';
+		$body    .= '- Det går inte att boka cyklar i sammanhängande perioder. <br><br>';
 
 
 		$headers = implode( "\r\n", $this->email_headers );

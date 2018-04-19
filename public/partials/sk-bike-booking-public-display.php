@@ -59,9 +59,8 @@ $bikes = Sk_Bike_Booking_Public::get_bikes();
 
 						<b>Välj cykelvagn</b>
 						<?php
-							$accessories = Sk_Bike_Booking_Public::get_accessories( $period_start . ':' . $period_end );
+							$accessories = Sk_Bike_Booking_Public::get_accessories( $bike->ID, $period_start . ':' . $period_end );
 							if ( ! empty( $accessories ) ) : ?>
-
 								<?php foreach ( $accessories as $accessorie ) : ?>
 									<div class="row accessorie-info">
 										<div class="col-xs-3 col-sm-2 bike__image">
@@ -71,6 +70,7 @@ $bikes = Sk_Bike_Booking_Public::get_bikes();
 										</div>
 										<div class="col-xs-6 col-sm-8">
 											<p><?php echo $accessorie->name; ?></p>
+											<p class="desc"><?php echo $accessorie->description; ?></p>
 										</div>
 										<div class="col-xs-3 col-sm-2">
 											<button type="button" data-accessorie="<?php echo $accessorie->term_id; ?>" class="btn btn-primary btn-sm" aria-pressed="false" autocomplete="off">
@@ -80,30 +80,31 @@ $bikes = Sk_Bike_Booking_Public::get_bikes();
 									</div>
 								<?php endforeach; ?>
 							<?php else: ?>
-								<div class="alert alert-inner"><p><?php _e( 'Det finns inga tillgängliga cykelvagnar för denna period.', 'bikebooking_textdomain' ); ?></p></div>
+								<div class="alert alert-inner"><p><?php _e( 'Det finns inga tillgängliga cykelvagnar för denna period eller för denna typ av cykel.', 'bikebooking_textdomain' ); ?></p></div>
 							<?php endif; ?>
 
 						<div class="form-info">
-							<p>Observera att du kommer få ett e-postmeddelande där du behöver bekräfta din bokning. Bokningen är inte giltig förrän du erhållit ett bokningsnummer vilket skickas efter att du bekräftat din bokning.</p>
+							<p><?php _e( 'Observera att du kommer få ett e-postmeddelande där du behöver bekräfta din bokning. Bokningen är inte giltig förrän du erhållit ett bokningsnummer vilket skickas efter att du bekräftat din bokning.', 'bikebooking_textdomain');?></p>
+							<p><?php _e( 'Samtliga fält är obligatoriska i nedan bokningsformulär.', 'bikebooking_textdomain');?></p>
 						</div>
 
 						<form>
 							<div class="form-group row">
-								<label for="booker-email-<?php echo $j . strtotime( $period_start ); ?>" class="col-sm-3 col-form-label text-right">E-postadress</label>
+								<label for="booker-email-<?php echo $j . strtotime( $period_start ); ?>" class="col-sm-3 col-form-label text-right"><?php _e('E-postadress', 'bikebooking_textdomain');?></label>
 								<div class="col-sm-9">
 									<input type="email" id="booker-email-<?php echo $j . strtotime( $period_start ); ?>" name="booker_email" class="booker-email form-control">
 								</div>
 							</div>
 
 							<div class="form-group row">
-								<label for="booker-name-<?php echo $j . strtotime( $period_start ); ?>" class="col-sm-3 col-form-label text-right">Namn</label>
+								<label for="booker-name-<?php echo $j . strtotime( $period_start ); ?>" class="col-sm-3 col-form-label text-right"><?php _e('Namn', 'bikebooking_textdomain');?></label>
 								<div class="col-sm-9">
 									<input type="text" id="booker-name-<?php echo $j . strtotime( $period_start ); ?>" name="booker_name" class="booker-name form-control">
 								</div>
 							</div>
 
 							<div class="form-group row">
-								<label for="booker-phone-<?php echo $j . strtotime( $period_start ); ?>" class="col-sm-3 col-form-label text-right">Telefonnummer</label>
+								<label for="booker-phone-<?php echo $j . strtotime( $period_start ); ?>" class="col-sm-3 col-form-label text-right"><?php _e('Telefonnummer', 'bikebooking_textdomain');?></label>
 								<div class="col-sm-9">
 									<input type="text" id="booker-phone-<?php echo $j . strtotime( $period_start ); ?>" name="booker_phone" class="booker-phone form-control">
 								</div>

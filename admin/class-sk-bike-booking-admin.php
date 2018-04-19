@@ -76,13 +76,23 @@ class Sk_Bike_Booking_Admin {
 				'show_ui'              => true,
 				'menu_position'        => 6,
 				'menu_icon'            => 'dashicons-list-view',
-				'capability_type'      => 'post',
 				'has_archive'          => true,
 				'hierarchical'         => false,
 				'rewrite'              => array( 'slug' => 'cykelbokningar' ),
 				'supports'             => array( 'title' ),
 				'show_in_menu'         => 'edit.php?post_type=bike',
-				'register_meta_box_cb' => array( $this, 'booking_meta_box' )
+				'register_meta_box_cb' => array( $this, 'booking_meta_box' ),
+				'capability_type' => array('post','bikebooking', 'bikebookings'),
+				'capabilities' => array(
+					'edit_post'          => 'edit_bikebooking',
+					'edit_posts'         => 'edit_bikebookings',
+					'edit_others_posts'  => 'edit_others_bikebookings',
+					//'publish_posts'      => 'publish_bikebookings',
+					'read_post'          => 'read_bikebooking',
+					'read_private_posts' => 'read_private_bikebooking',
+					'delete_post'        => 'delete_bikebooking',
+					'delete_posts'       => 'delete_bikebooking'
+				),
 
 
 			)
@@ -104,15 +114,84 @@ class Sk_Bike_Booking_Admin {
 				'show_ui'         => true,
 				'menu_position'   => 6,
 				'menu_icon'       => 'dashicons-list-view',
-				'capability_type' => 'post',
 				'has_archive'     => true,
 				'hierarchical'    => false,
 				'supports'        => array( 'title', 'thumbnail' ),
+				'capability_type' => array('post','bike', 'bikes'),
+				'capabilities' => array(
+					'edit_post'          => 'edit_bike',
+					'edit_posts'         => 'edit_bikes',
+					'edit_others_posts'  => 'edit_others_bikes',
+					'publish_posts'      => 'publish_bikes',
+					'read_post'          => 'read_bike',
+					'read_private_posts' => 'read_private_bike',
+					'delete_post'        => 'delete_bike',
+					'delete_posts'       => 'delete_bike'
+				),
 			)
 		);
 
+	}
 
+	/**
+	 * Setting the caps for bike booking.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @return array
+	 */
+	public static function get_caps(){
 
+		$cpt_bikebooking = array(
+			'read_bikebooking'              => true,
+			'read_private_bikebookings'     => true,
+			'edit_bikebooking'              => true,
+			'edit_bikebookings'             => true,
+			'edit_others_bikebookings'      => true,
+			'edit_published_bikebookings'   => true,
+			'publish_bikebookings'          => true,
+			'delete_bikebooking'            => true,
+			'delete_bikebookings'           => true,
+			'delete_private_bikebookings'   => true,
+			'delete_published_bikebookings' => true,
+			'delete_others_bikebookings'    => true,
+		);
+
+		$cpt_bike             = array(
+			'read_bike'              => true,
+			'read_private_bikes'     => true,
+			'edit_bike'              => true,
+			'edit_bikes'             => true,
+			'edit_others_bikes'      => true,
+			'edit_published_bikes'   => true,
+			'publish_bikes'          => true,
+			'delete_bike'            => true,
+			'delete_bikes'           => true,
+			'delete_private_bikes'   => true,
+			'delete_published_bikes' => true,
+			'delete_others_bikes'    => true,
+		);
+		$tax_bike_attributes  = array(
+			'assign_bike-attributes' => true,
+			'edit_bike-attributes'   => true,
+			'manage_bike-attributes' => true,
+			'delete_bike-attributes' => true,
+		);
+		$tax_bike_accessories = array(
+			'assign_bike-accessories' => true,
+			'edit_bike-accessories'   => true,
+			'manage_bike-accessories' => true,
+			'delete_bike-accessories' => true,
+		);
+
+		$misc = array(
+			'read'         => true,
+			'upload_files' => true
+		);
+
+		$caps = array_merge( $cpt_bike, $cpt_bikebooking, $tax_bike_accessories, $tax_bike_attributes, $misc );
+
+		return $caps;
 
 	}
 
@@ -226,6 +305,12 @@ class Sk_Bike_Booking_Admin {
 				'public'       => true,
 				'show_ui'      => true,
 				'hierarchical' => true,
+				'capabilities' => array(
+					'assign_terms' => 'assign_bike-attributes',
+					'edit_terms'   => 'edit_bike-attributes',
+					'manage_terms' => 'manage_bike-attributes',
+					'delete_terms' => 'delete_bike-attributes',
+				)
 			)
 		);
 
@@ -237,6 +322,12 @@ class Sk_Bike_Booking_Admin {
 				'public'       => true,
 				'show_ui'      => true,
 				'hierarchical' => true,
+				'capabilities' => array(
+					'assign_terms' => 'assign_bike-accessories',
+					'edit_terms'   => 'edit_bike-accessories',
+					'manage_terms' => 'manage_bike-accessories',
+					'delete_terms' => 'delete_bike-accessories',
+				)
 			)
 		);
 	}

@@ -43,8 +43,16 @@
 
 .bikebooking-period .accessorie-info{
     margin-bottom: .5em;
-
 }
+.bikebooking-period .accessorie-info p{
+    margin-bottom: 0;
+}
+
+.bikebooking-period .accessorie-info .desc{
+    font-size: 90%;
+}
+
+
 .bikebooking-period .accessorie-info.selected{
     border-top: 2px dashed #d44a00;
     border-bottom: 2px dashed #d44a00;
