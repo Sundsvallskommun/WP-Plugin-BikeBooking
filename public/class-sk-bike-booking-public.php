@@ -60,6 +60,12 @@ class Sk_Bike_Booking_Public {
 	}
 
 
+	/**
+	 * Listen for GET requests if we have a confirm or cancel.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 */
 	public function book_request() {
 		if ( isset( $_GET['bikebooking'] ) && $_GET['bikebooking'] === 'confirm' ) {
 			if(isset($_GET['ref'])){
@@ -75,6 +81,13 @@ class Sk_Bike_Booking_Public {
 
 	}
 
+	/**
+	 * Handles status messages.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @return bool
+	 */
 	public static function requests() {
 		if ( ! is_post_type_archive( 'bikebooking' ) ){
 			return false;
@@ -107,6 +120,15 @@ class Sk_Bike_Booking_Public {
 		<?php
 	}
 
+	/**
+	 * Cancel and remove the booking post.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param $hash
+	 *
+	 * @return bool
+	 */
 	public function book_cancel( $hash ){
 		global $wpdb;
 		echo $hash;
@@ -116,7 +138,7 @@ class Sk_Bike_Booking_Public {
 			", $hash ) );
 
 		if(empty($booking_id)){
-			error_log('Bike booking: cannot find post_id from given hash when cancel a booking i requested.');
+			error_log('Bike booking: cannot find post_id from given hash when cancel a booking is requested.');
 			return false;
 		}
 
@@ -129,7 +151,15 @@ class Sk_Bike_Booking_Public {
 
 	}
 
-
+	/**
+	 * Grab the transient for booking hash.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param $hash
+	 *
+	 * @return bool
+	 */
 	public function book_confirm( $hash ){
 
 		$transient = get_transient( 'bikebooking_' . $hash );
@@ -167,6 +197,15 @@ class Sk_Bike_Booking_Public {
 		return $signature;
 	}
 
+	/**
+	 * Insert the booking.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param $transient
+	 *
+	 * @return bool
+	 */
 	public function book_insert( $transient ){
 
 		$booking = explode( ':', base64_decode( $transient ) );
@@ -178,7 +217,6 @@ class Sk_Bike_Booking_Public {
 			exit();
 		}
 
-
 		$accessorie_removed = false;
 		if( !empty( $booking[4] ) ){
 			if ( ! self::is_accessorie_available( $booking[4], $booking[2], $booking[3] ) ) {
@@ -187,7 +225,6 @@ class Sk_Bike_Booking_Public {
 			}
 
 		}
-
 
 		$args = array(
 			'post_type'  => 'bikebooking',
@@ -326,7 +363,7 @@ class Sk_Bike_Booking_Public {
 
 
 	/**
-	 * get_period_interval
+	 * Get the interval for booking periods.
 	 *
 	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
 	 *
@@ -381,6 +418,15 @@ class Sk_Bike_Booking_Public {
 	}
 
 
+	/**
+	 * Get monday for a given date.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param null $date
+	 *
+	 * @return DateTime|null
+	 */
 	public function get_start_of_week_date($date = null) {
 		if ($date instanceof DateTime) {
 			$date = clone $date;
@@ -404,7 +450,7 @@ class Sk_Bike_Booking_Public {
 
 
 	/**
-	 * get_bikes
+	 * Get all the bikes.
 	 *
 	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
 	 *
@@ -425,7 +471,8 @@ class Sk_Bike_Booking_Public {
 
 
 	/**
-	 * get_bikes
+	 * Get accessories.
+	 * Add image and remove if not available.
 	 *
 	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
 	 *
@@ -455,7 +502,7 @@ class Sk_Bike_Booking_Public {
 
 
 	/**
-	 * get_attributes
+	 * Get the attributes for a bike.
 	 *
 	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
 	 *
@@ -479,6 +526,12 @@ class Sk_Bike_Booking_Public {
 
 	}
 
+	/**
+	 * Ajax request when booking a bike.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 */
 	public function book_bike(){
 		$booker['email'] = $_POST['booker_email'];
 		$booker['name']  = $_POST['booker_name'];
@@ -505,7 +558,7 @@ class Sk_Bike_Booking_Public {
 
 
 	/**
-	 * sum_of_bikes_available
+	 * How many bikes are available for a given period.
 	 *
 	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
 	 *
@@ -612,8 +665,9 @@ class Sk_Bike_Booking_Public {
 	 *
 	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
 	 *
-	 * @param $bike_id
+	 * @param $accessorie_id
 	 * @param $period_start
+	 * @param $period_end
 	 *
 	 * @return bool
 	 */
@@ -648,9 +702,18 @@ class Sk_Bike_Booking_Public {
 	}
 
 
-
-
-
+	/**
+	 * Send the booking email that needs to be confirmed.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param $booker
+	 * @param $bike_id
+	 * @param string $accessorie_id
+	 * @param $bike_period
+	 *
+	 * @return bool
+	 */
 	public function send_booking_email( $booker, $bike_id, $accessorie_id = '', $bike_period ){
 
 		$booking_period = explode(':', $bike_period);
@@ -692,6 +755,13 @@ class Sk_Bike_Booking_Public {
 	}
 
 
+	/**
+	 * Sending rejected email.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param $email
+	 */
 	public function send_booking_email_rejected( $email ){
 
 		// Build email.
@@ -712,6 +782,13 @@ class Sk_Bike_Booking_Public {
 	}
 
 
+	/**
+	 * Email when the boooking is confirmed.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param $post_id
+	 */
 	public function send_booking_email_confirmed( $post_id ){
 
 		$booking_post = get_post( $post_id );
@@ -729,6 +806,13 @@ class Sk_Bike_Booking_Public {
 	}
 
 
+	/**
+	 * Email when a booking has been canceled.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param $booking_id
+	 */
 	public function send_booking_email_canceled( $booking_id ){
 
 		$email = get_post_meta( $booking_id, 'bb-email', true );

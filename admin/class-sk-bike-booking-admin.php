@@ -56,9 +56,9 @@ class Sk_Bike_Booking_Admin {
 
 
 	/**
-	 * Register post type for reports
+	 * Register post types.
 	 *
-	 * @since    1.0.0
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
 	 *
 	 */
 	public function register_post_type() {
@@ -195,6 +195,13 @@ class Sk_Bike_Booking_Admin {
 
 	}
 
+	/**
+	 * Adding meta boxes.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param $post
+	 */
 	function booking_meta_box( $post ) {
 		add_meta_box(
 			'booking-info',
@@ -211,26 +218,33 @@ class Sk_Bike_Booking_Admin {
 	}
 
 
+	/**
+	 * Print text in meta box.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param $post
+	 */
 	function booking_confirm_meta_box_output( $post ){
 		echo '<div>'.$post->post_content.'</div>';
 	}
 
+	/**
+	 * Print text in meta box.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @param $post
+	 */
 	function booking_data_meta_box_output( $post ){
 		?>
 		<div>
 			<p><span>Namn:</span> <?php echo get_post_meta( $post->ID, 'bb-name', true);?></p>
 			<p><span>Telefonnummer:</span> <?php echo get_post_meta( $post->ID, 'bb-phone', true);?></p>
 			<p><span>E-postadress:</span> <?php echo get_post_meta( $post->ID, 'bb-email', true);?></p>
-
-
 		</div>
-
 	<?php
 	}
-
-
-
-
 
 
 	/**

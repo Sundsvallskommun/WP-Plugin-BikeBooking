@@ -17,118 +17,143 @@ $bikes = Sk_Bike_Booking_Public::get_bikes();
 
 <div class="sk-collapse bikebooking-period">
 	<h2>
-		<a data-toggle="collapse" href="#temp<?php echo $i;?>" aria-expanded="false" aria-controls="temp<?php echo $i;?>" class="collapsed">
-			<?php echo Sk_Bike_Booking_Public::sum_of_bikes_available( $period_start, $period_end ); ?> st tillgängliga cyklar <?php echo 'v'.date('W', strtotime( $period_start ) ).' - v'.date('W', strtotime( $period_end ) ) ;?>
-			<span class="date-period"><?php echo date_i18n('l j F Y', strtotime($period_start)); ?> till <?php echo date_i18n('l j F', strtotime($period_end));?></span>
-			<!--<?php echo Sk_Bike_Booking_Public::sum_of_bikes_available( $period_start, $period_end ); ?> st Tillgängliga cyklar <?php echo '(v'.date('W', strtotime( $period_start ) ).') '.$period_start. ' - (v'.date('W', strtotime( $period_end ) ).') '. $period_end;?>-->
+		<a data-toggle="collapse" href="#temp<?php echo $i; ?>" aria-expanded="false"
+		   aria-controls="temp<?php echo $i; ?>" class="collapsed">
+			<?php printf(__('%s st tillgängliga cyklar %s', 'bikebooking_textdomain'), Sk_Bike_Booking_Public::sum_of_bikes_available( $period_start, $period_end ), 'v' . date( 'W', strtotime( $period_start ) ) . ' - v' . date( 'W', strtotime( $period_end ) ) ); ?>
+			<span class="date-period">
+				<?php printf(__('%s till %s', 'bikebooking_textdomain'), date_i18n( 'l j F Y', strtotime( $period_start ) ), date_i18n( 'l j F', strtotime( $period_end ) ) ); ?>
+			</span>
 		</a>
 	</h2>
-	<div class="collapse" id="temp<?php echo $i;?>" aria-expanded="false" style="/*height: 0px;*/">
+	<div class="collapse" id="temp<?php echo $i; ?>" aria-expanded="false" style="/*height: 0px;*/">
 		<div class="bike-period">
-			<?php if( Sk_Bike_Booking_Public::sum_of_bikes_available( $period_start, $period_end ) === 0 ) : ?>
+			<?php if ( Sk_Bike_Booking_Public::sum_of_bikes_available( $period_start, $period_end ) === 0 ) : ?>
 				<p><?php _e( 'Det finns inga tillgängliga cyklar för denna period.', 'bikebooking_textdomain' ); ?></p>
 			<?php endif; ?>
-		<?php $j=0; foreach ( $bikes as $bike ) : $j++;?>
-			<?php if( Sk_Bike_Booking_Public::is_bike_available( $bike->ID, $period_start, $period_end ) ) : ?>
-			<div class="bike">
-				<div class="row bike-info">
-					<div class="col-sm-3 bike__image">
-						<?php echo get_the_post_thumbnail( $bike->ID, 'medium' ); ?>
-					</div>
-					<div class="col-sm-9">
-						<h4><?php echo $bike->post_title; ?><button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#bike-<?php echo $bike->ID . $i; ?>" aria-expanded="false" aria-controls="bike-<?php echo $bike->ID . $i; ?>">Boka</button></h4>
-						<?php Sk_Bike_Booking_Public::the_attributes( $bike->ID ); ?>
-					</div>
-				</div>
-
-
-
-				<div class="collapse bike-book-collapse" id="bike-<?php echo $bike->ID . $i; ?>">
-					<div class="alert alert-warning">
-						<h3>Bokningsförfrågan</h3>
-						<div class="alert alert-inner selected-items">
-							<div class="row bike-info">
-								<div class="col-sm-2 bike__image">
-									<?php echo get_the_post_thumbnail( $bike->ID, 'medium' ); ?>
-								</div>
-								<div class="col-sm-10">
-									<p><?php echo $bike->post_title; ?></p>
-								</div>
+			<?php $j = 0;
+			foreach ( $bikes as $bike ) : $j ++; ?>
+				<?php if ( Sk_Bike_Booking_Public::is_bike_available( $bike->ID, $period_start, $period_end ) ) : ?>
+					<div class="bike">
+						<div class="row bike-info">
+							<div class="col-sm-3 bike__image">
+								<?php echo get_the_post_thumbnail( $bike->ID, 'medium' ); ?>
 							</div>
-							<div class="selected-accessorie"></div>
-						</div>
-						<div class="row">
-							<div class="col-sm-12"><h4><?php _e( 'Välj cykelvagn', 'bikebooking_textdomain' ); ?></h4>
+							<div class="col-sm-9">
+								<h4><?php echo $bike->post_title; ?>
+									<button type="button" class="btn btn-primary btn-sm" data-toggle="collapse"
+									        data-target="#bike-<?php echo $bike->ID . $i; ?>" aria-expanded="false"
+									        aria-controls="bike-<?php echo $bike->ID . $i; ?>"><?php _e('Boka', 'bikebooking_textdomain');?>
+									</button>
+								</h4>
+								<?php Sk_Bike_Booking_Public::the_attributes( $bike->ID ); ?>
 							</div>
 						</div>
 
-						<?php
-							$accessories = Sk_Bike_Booking_Public::get_accessories( $bike->ID, $period_start . ':' . $period_end );
-							if ( ! empty( $accessories ) ) : ?>
-								<?php foreach ( $accessories as $key => $accessorie ) : ?>
-									<div class="row accessorie-info<?php echo $key === 0 ? ' first' : null;?>">
-										<div class="col-xs-3 col-sm-2 bike__image">
-											<?php if(!empty($accessorie->image)) :?>
-												<img src="<?php echo $accessorie->image; ?>">
-											<?php endif; ?>
+
+						<div class="collapse bike-book-collapse" id="bike-<?php echo $bike->ID . $i; ?>">
+							<div class="alert alert-warning">
+								<h3><?php _e('Bokningsförfrågan', 'bikebooking_textdomain');?></h3>
+								<div class="alert alert-inner selected-items">
+									<div class="row bike-info">
+										<div class="col-sm-2 bike__image">
+											<?php echo get_the_post_thumbnail( $bike->ID, 'medium' ); ?>
 										</div>
-										<div class="col-xs-6 col-sm-8">
-											<p><?php echo $accessorie->name; ?></p>
-											<p class="desc"><?php echo $accessorie->description; ?></p>
-										</div>
-										<div class="col-xs-3 col-sm-2">
-											<button type="button" data-accessorie="<?php echo $accessorie->term_id; ?>" class="btn btn-primary btn-sm" aria-pressed="false" autocomplete="off">
-												Välj
-											</button>
+										<div class="col-sm-10">
+											<p><?php echo $bike->post_title; ?></p>
 										</div>
 									</div>
-								<?php endforeach; ?>
-							<?php else: ?>
-								<div class="alert alert-inner"><p><?php _e( 'Det finns inga tillgängliga cykelvagnar för denna period eller för denna typ av cykel.', 'bikebooking_textdomain' ); ?></p></div>
-							<?php endif; ?>
-
-						<div class="form-info">
-							<h4><?php _e( 'Formulär för bokningsförfrågan', 'bikebooking_textdomain' ); ?></h4>
-							<p><?php _e( 'Observera att du kommer få ett e-postmeddelande där du behöver bekräfta din bokning. Bokningen är ej giltig förrän du erhållit ett bokningsnummer vilket skickas efter att du bekräftat din bokning.', 'bikebooking_textdomain');?></p>
-							<p><?php _e( 'Samtliga fält i formuläret är obligatoriska.', 'bikebooking_textdomain');?></p>
-						</div>
-
-						<form>
-							<div class="form-group row">
-								<label for="booker-email-<?php echo $j . strtotime( $period_start ); ?>" class="col-sm-3 col-form-label text-right"><?php _e('E-postadress', 'bikebooking_textdomain');?></label>
-								<div class="col-sm-9">
-									<input type="email" id="booker-email-<?php echo $j . strtotime( $period_start ); ?>" name="booker_email" class="booker-email form-control">
+									<div class="selected-accessorie"></div>
 								</div>
-							</div>
-
-							<div class="form-group row">
-								<label for="booker-name-<?php echo $j . strtotime( $period_start ); ?>" class="col-sm-3 col-form-label text-right"><?php _e('Namn', 'bikebooking_textdomain');?></label>
-								<div class="col-sm-9">
-									<input type="text" id="booker-name-<?php echo $j . strtotime( $period_start ); ?>" name="booker_name" class="booker-name form-control">
+								<div class="row">
+									<div class="col-sm-12">
+										<h4><?php _e( 'Välj cykelvagn', 'bikebooking_textdomain' ); ?></h4>
+									</div>
 								</div>
-							</div>
 
-							<div class="form-group row">
-								<label for="booker-phone-<?php echo $j . strtotime( $period_start ); ?>" class="col-sm-3 col-form-label text-right"><?php _e('Telefonnummer', 'bikebooking_textdomain');?></label>
-								<div class="col-sm-9">
-									<input type="text" id="booker-phone-<?php echo $j . strtotime( $period_start ); ?>" name="booker_phone" class="booker-phone form-control">
+								<?php
+								$accessories = Sk_Bike_Booking_Public::get_accessories( $bike->ID, $period_start . ':' . $period_end );
+								if ( ! empty( $accessories ) ) : ?>
+									<?php foreach ( $accessories as $key => $accessorie ) : ?>
+										<div class="row accessorie-info<?php echo $key === 0 ? ' first' : null; ?>">
+											<div class="col-xs-3 col-sm-2 bike__image">
+												<?php if ( ! empty( $accessorie->image ) ) : ?>
+													<img src="<?php echo $accessorie->image; ?>">
+												<?php endif; ?>
+											</div>
+											<div class="col-xs-6 col-sm-8">
+												<p><?php echo $accessorie->name; ?></p>
+												<p class="desc"><?php echo $accessorie->description; ?></p>
+											</div>
+											<div class="col-xs-3 col-sm-2">
+												<button type="button"
+												        data-accessorie="<?php echo $accessorie->term_id; ?>"
+												        class="btn btn-primary btn-sm" aria-pressed="false"
+												        autocomplete="off">
+													<?php _e( 'Välj', 'bikebooking_textdomain' ); ?>
+												</button>
+											</div>
+										</div>
+									<?php endforeach; ?>
+								<?php else: ?>
+									<div class="alert alert-inner">
+										<p><?php _e( 'Det finns inga tillgängliga cykelvagnar för denna period eller för denna typ av cykel.', 'bikebooking_textdomain' ); ?></p>
+									</div>
+								<?php endif; ?>
+
+								<div class="form-info">
+									<h4><?php _e( 'Formulär för bokningsförfrågan', 'bikebooking_textdomain' ); ?></h4>
+									<p><?php _e( 'Observera att du kommer få ett e-postmeddelande där du behöver bekräfta din bokning. Bokningen är ej giltig förrän du erhållit ett bokningsnummer vilket skickas efter att du bekräftat din bokning.', 'bikebooking_textdomain' ); ?></p>
+									<p><?php _e( 'Samtliga fält i formuläret är obligatoriska.', 'bikebooking_textdomain' ); ?></p>
 								</div>
-							</div>
 
-							<div class="form-group row text-right">
-								<div class="col-sm-12">
-									<button type="button" class="btn btn-primary btn-sm btn-close">Stäng</button>
-									<button type="button" data-bike="<?php echo $bike->ID;?>" data-period="<?php echo $period_start . ':' . $period_end; ?>" class="book-a-bike btn btn-primary btn-sm">Skicka förfrågan</button>
-								</div>
-							</div>
-						</form>
+								<form>
+									<div class="form-group row">
+										<label for="booker-email-<?php echo $j . strtotime( $period_start ); ?>"
+										       class="col-sm-3 col-form-label text-right"><?php _e( 'E-postadress', 'bikebooking_textdomain' ); ?></label>
+										<div class="col-sm-9">
+											<input type="email"
+											       id="booker-email-<?php echo $j . strtotime( $period_start ); ?>"
+											       name="booker_email" class="booker-email form-control">
+										</div>
+									</div>
 
-					</div><!-- .alert -->
-				</div><!-- .bike-book-collapse -->
+									<div class="form-group row">
+										<label for="booker-name-<?php echo $j . strtotime( $period_start ); ?>"
+										       class="col-sm-3 col-form-label text-right"><?php _e( 'Namn', 'bikebooking_textdomain' ); ?></label>
+										<div class="col-sm-9">
+											<input type="text"
+											       id="booker-name-<?php echo $j . strtotime( $period_start ); ?>"
+											       name="booker_name" class="booker-name form-control">
+										</div>
+									</div>
 
-			</div><!-- .bike -->
-			<?php endif; ?>
-		<?php endforeach; ?>
+									<div class="form-group row">
+										<label for="booker-phone-<?php echo $j . strtotime( $period_start ); ?>"
+										       class="col-sm-3 col-form-label text-right"><?php _e( 'Telefonnummer', 'bikebooking_textdomain' ); ?></label>
+										<div class="col-sm-9">
+											<input type="text"
+											       id="booker-phone-<?php echo $j . strtotime( $period_start ); ?>"
+											       name="booker_phone" class="booker-phone form-control">
+										</div>
+									</div>
+
+									<div class="form-group row text-right">
+										<div class="col-sm-12">
+											<button type="button" class="btn btn-primary btn-sm btn-close"><?php _e( 'Stäng', 'bikebooking_textdomain' ); ?>
+											</button>
+											<button type="button" data-bike="<?php echo $bike->ID; ?>"
+											        data-period="<?php echo $period_start . ':' . $period_end; ?>"
+											        class="book-a-bike btn btn-primary btn-sm"><?php _e( 'Skicka förfrågan', 'bikebooking_textdomain' ); ?></button>
+										</div>
+									</div>
+								</form>
+
+							</div><!-- .alert -->
+						</div><!-- .bike-book-collapse -->
+
+					</div><!-- .bike -->
+				<?php endif; ?>
+			<?php endforeach; ?>
 		</div><!-- .bike-period -->
 	</div>
 </div>
