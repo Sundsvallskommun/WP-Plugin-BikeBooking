@@ -144,12 +144,32 @@ class Sk_Bike_Booking_Public {
 
 	}
 
+	/**
+	 * Email signature.
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 * @return string
+	 */
+	private static function get_email_signature(){
+		$signature = '<br><br>';
+		$signature .= 'Vänliga hälsningar<br><br>';
+		$signature .= 'Johanna Keil<br>';
+		$signature .= 'Projektledare för Hållbart resande<br>';
+		$signature .= 'Gatuavdelningen<br>';
+		$signature .= 'Telefon: 060-191587<br>';
+		$signature .= 'E-post: nyavagarfram@sundsvall.se<br><br>';
+		$signature .= 'Sundsvalls kommun<br>';
+		$signature .= '851 85 Sundsvall<br>';
+		$signature .= 'Besöksadress: Norrmalmsgatan 4<br>';
+		$signature .= 'Växel: 060-19 10 00<br>';
+		$signature .= 'www.sundsvall.se<br>';
+		return $signature;
+	}
+
 	public function book_insert( $transient ){
 
 		$booking = explode( ':', base64_decode( $transient ) );
-
-		//Util::debug( $booking );
-		//die();
 
 
 		// check if the bike i still available
@@ -194,17 +214,17 @@ class Sk_Bike_Booking_Public {
 		// set up content to be same as email body.
 		$booking_cancel_url = get_bloginfo('url') . '/?bikebooking=cancel&ref=' . $transient;
 		$content = 'Här kommer en bekräftelse på din bokade cykel.<br><br>';
-		$content .= 'Bokningsreferens: ' . $post_id . '<br>';
-		$content .= 'Cykel: ' . get_the_title( $booking[1] ) . '<br>';
+		$content .= '<b>Bokningsreferens: ' . $post_id . '</b><br>';
+		$content .= '<b>Cykel: ' . get_the_title( $booking[1] ) . '</b><br>';
 		if( !empty( $booking[4] ) ){
 			$term = get_term( $booking[4] );
-			$content .= 'Tillbehör: ' . $term->name . '<br>';
+			$content .= '<b>Tillbehör: ' . $term->name . '</b><br>';
 		}
 		if( $accessorie_removed === true ){
 			$content .= 'Tillbehör: Cykelvagn borttagen.<br>';
 			$content .= 'Tyvärr har cykelvagnen redan blivit bokad. Är det viktigt med cykelvagn ber vi dig avboka denna bokning och försöka finna kombinationen av cykel och cykelvagn i en annan period.<br>';
 		}
-		$content .= 'Låneperiod: ' . $booking[2] . ':' . $booking[3] . '<br><br>';
+		$content .= '<b>Låneperiod: ' . $booking[2] . ':' . $booking[3] . '</b><br><br>';
 
 
 
@@ -216,6 +236,7 @@ class Sk_Bike_Booking_Public {
 		$content .= ' Om du får förhinder och inte kan hämta ut din cykel som planerat vill vi att du avbokar den. Du hittar avbokningslänken längre ner i detta meddelande.<br>';
 		$content .= ' Vi hoppas att du kommer att få två härliga veckor i cykelsadeln. Vi kontaktar dig efter avslutad låneperiod för att höra hur det gått.<br><br>';
 		$content .= sprintf( __( '<a href="%s">Klicka här för att avboka din elcykel</a>.', 'bikebooking_textdomain' ), $booking_cancel_url);
+		$content .= self::get_email_signature();
 
 
 
@@ -659,6 +680,7 @@ class Sk_Bike_Booking_Public {
 		$body    = 'Tack för din bokningsförfrågan. <br><br>';
 		$body    .= 'För att bekräfta din bokning behöver du klicka på den bifogade länken och följa instruktionerna. Vi vill förtydliga att bokningen ej är reserverad och inte heller giltig förrän du erhållit ett bokningsnummer.<br><br>';
 		$body    .= sprintf( __( '<a href="%s">Klicka här för att bekräfta din bokning</a>', 'bikebooking_textdomain' ), $booking_url );
+		$body    .= self::get_email_signature();
 
 		$headers = implode( "\r\n", $this->email_headers );
 
@@ -678,6 +700,7 @@ class Sk_Bike_Booking_Public {
 		$body    = 'Din bokning kunde inte genomföras på grund av någon av anledningarna nedan:<br><br>';
 		$body    .= '- Det går inte att boka fler än en cykel under samma period. <br>';
 		$body    .= '- Det går inte att boka cyklar i sammanhängande perioder. <br><br>';
+		$body    .= self::get_email_signature();
 
 
 		$headers = implode( "\r\n", $this->email_headers );
@@ -694,10 +717,6 @@ class Sk_Bike_Booking_Public {
 		$booking_post = get_post( $post_id );
 
 		$email = get_post_meta( $post_id, 'bb-email', true );
-		$hash = get_post_meta( $post_id, 'bb-hash', true );
-		$period = get_post_meta( $post_id, 'bb-period', true );
-
-		$booking_cancel_url = get_bloginfo('url') . '/?bikebooking=cancel&ref=' . $hash;
 
 		// Build email.
 		$subject = 'Bokningsbekräftelse av elcykel';
@@ -717,6 +736,7 @@ class Sk_Bike_Booking_Public {
 		// Build email.
 		$subject = 'Bekräftelse på avbokning';
 		$body    = sprintf( __( 'En avbokning av elcykel med bokningsreferens %s är nu genomförd.<br><br>', 'bikebooking_textdomain' ), $booking_id );
+		$body    .= self::get_email_signature();
 		$headers = implode( "\r\n", $this->email_headers );
 
 		// Send it.
