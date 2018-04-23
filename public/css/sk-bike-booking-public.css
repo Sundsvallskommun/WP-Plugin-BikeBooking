@@ -11,6 +11,12 @@
     line-height: 1.5;
 }
 
+.bikebooking-period a .date-period{
+    font-size: 60%;
+    padding-top: .3em;
+    display: block;
+}
+
 .bikebooking-period .text-right{
     text-align: right;
 }
@@ -21,6 +27,12 @@
 
 .bikebooking-period .bike-info{
     margin-bottom: 1em;
+}
+
+.bikebooking-period .alert .bike-info{
+    margin-bottom: .5em;
+    padding-bottom: .5em;
+    border-bottom: 2px solid #ffede0;
 }
 
 .bikebooking-period .bike.fade{
@@ -37,13 +49,58 @@
     margin-bottom: 1em;
 }
 
+.bikebooking-period .bike-info .bike-info__attributes span{
+    font-size: 90%;
+}
+
+.bikebooking-period .bike-info .bike-info__attributes ul{
+    padding-left: 0;
+}
+
+.bikebooking-period .bike-info .bike-info__attributes li{
+    float: left;
+    margin-right: 1em;
+    padding-right: .75em;
+}
+
+.bikebooking-period .bike-info .bike-info__attributes li:first-child{
+    list-style-type: none;
+    margin-left: 0;
+}
+
+
+
+
 .bikebooking-period .bike:last-child{
     border-bottom: 0;
 }
 
+.bikebooking-period .selected-items.alert{
+    padding-bottom: 0;
+}
+
+
 .bikebooking-period .accessorie-info{
     margin-bottom: .5em;
+    padding-bottom: .5em;
+    border-bottom: 2px solid #ffffff;
 }
+
+.bikebooking-period .accessorie-info.first{
+    border-top: 2px solid #ffffff;
+    padding-top: .5em;
+}
+
+
+
+.bikebooking-period .accessorie-info h4{
+    margin-bottom: 0;
+}
+
+.bikebooking-period .accessorie-info .btn{
+    float: right;
+}
+
 .bikebooking-period .accessorie-info p{
     margin-bottom: 0;
 }
