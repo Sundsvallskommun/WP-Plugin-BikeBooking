@@ -18,7 +18,8 @@ $bikes = Sk_Bike_Booking_Public::get_bikes();
 <div class="sk-collapse bikebooking-period">
 	<h2>
 		<a data-toggle="collapse" href="#temp<?php echo $i;?>" aria-expanded="false" aria-controls="temp<?php echo $i;?>" class="collapsed">
-			<?php echo Sk_Bike_Booking_Public::sum_of_bikes_available( $period_start, $period_end ); ?> st Tillgängliga cyklar <?php echo 'v'.date('W', strtotime( $period_start ) ).' - v'.date('W', strtotime( $period_end ) ) ;?>
+			<?php echo Sk_Bike_Booking_Public::sum_of_bikes_available( $period_start, $period_end ); ?> st tillgängliga cyklar <?php echo 'v'.date('W', strtotime( $period_start ) ).' - v'.date('W', strtotime( $period_end ) ) ;?>
+			<span class="date-period"><?php echo date_i18n('l j F Y', strtotime($period_start)); ?> till <?php echo date_i18n('l j F', strtotime($period_end));?></span>
 			<!--<?php echo Sk_Bike_Booking_Public::sum_of_bikes_available( $period_start, $period_end ); ?> st Tillgängliga cyklar <?php echo '(v'.date('W', strtotime( $period_start ) ).') '.$period_start. ' - (v'.date('W', strtotime( $period_end ) ).') '. $period_end;?>-->
 		</a>
 	</h2>
@@ -45,7 +46,7 @@ $bikes = Sk_Bike_Booking_Public::get_bikes();
 				<div class="collapse bike-book-collapse" id="bike-<?php echo $bike->ID . $i; ?>">
 					<div class="alert alert-warning">
 						<h3>Bokningsförfrågan</h3>
-						<div class="alert alert-inner">
+						<div class="alert alert-inner selected-items">
 							<div class="row bike-info">
 								<div class="col-sm-2 bike__image">
 									<?php echo get_the_post_thumbnail( $bike->ID, 'medium' ); ?>
@@ -56,13 +57,16 @@ $bikes = Sk_Bike_Booking_Public::get_bikes();
 							</div>
 							<div class="selected-accessorie"></div>
 						</div>
+						<div class="row">
+							<div class="col-sm-12"><h4><?php _e( 'Välj cykelvagn', 'bikebooking_textdomain' ); ?></h4>
+							</div>
+						</div>
 
-						<b>Välj cykelvagn</b>
 						<?php
 							$accessories = Sk_Bike_Booking_Public::get_accessories( $bike->ID, $period_start . ':' . $period_end );
 							if ( ! empty( $accessories ) ) : ?>
-								<?php foreach ( $accessories as $accessorie ) : ?>
-									<div class="row accessorie-info">
+								<?php foreach ( $accessories as $key => $accessorie ) : ?>
+									<div class="row accessorie-info<?php echo $key === 0 ? ' first' : null;?>">
 										<div class="col-xs-3 col-sm-2 bike__image">
 											<?php if(!empty($accessorie->image)) :?>
 												<img src="<?php echo $accessorie->image; ?>">
@@ -84,8 +88,9 @@ $bikes = Sk_Bike_Booking_Public::get_bikes();
 							<?php endif; ?>
 
 						<div class="form-info">
-							<p><?php _e( 'Observera att du kommer få ett e-postmeddelande där du behöver bekräfta din bokning. Bokningen är inte giltig förrän du erhållit ett bokningsnummer vilket skickas efter att du bekräftat din bokning.', 'bikebooking_textdomain');?></p>
-							<p><?php _e( 'Samtliga fält är obligatoriska i nedan bokningsformulär.', 'bikebooking_textdomain');?></p>
+							<h4><?php _e( 'Formulär för bokningsförfrågan', 'bikebooking_textdomain' ); ?></h4>
+							<p><?php _e( 'Observera att du kommer få ett e-postmeddelande där du behöver bekräfta din bokning. Bokningen är ej giltig förrän du erhållit ett bokningsnummer vilket skickas efter att du bekräftat din bokning.', 'bikebooking_textdomain');?></p>
+							<p><?php _e( 'Samtliga fält i formuläret är obligatoriska.', 'bikebooking_textdomain');?></p>
 						</div>
 
 						<form>
