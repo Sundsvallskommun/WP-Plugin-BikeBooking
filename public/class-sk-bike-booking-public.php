@@ -97,6 +97,13 @@ class Sk_Bike_Booking_Public {
 			</div>
 			<?php endif;?>
 
+		<?php if ( isset( $_GET['status'] ) && $_GET['status'] === 'bike-unavailable' ) : ?>
+			<div class="bikebooking-status">
+				<h1 class="single-post__title"><?php _e( 'Cykel ej tillgänglig', 'bikebooking_textdomain' ); ?></h1>
+				<p><?php _e( 'Tyvärr har den efterfrågade cykeln har redan blivit bokad. Prova att göra en ny förfrågan på en annan cykel.', 'bikebooking_textdomain' ); ?></p>
+			</div>
+		<?php endif;?>
+
 		<?php
 	}
 
@@ -198,6 +205,16 @@ class Sk_Bike_Booking_Public {
 			$content .= 'Tyvärr har cykelvagnen redan blivit bokad. Är det viktigt med cykelvagn ber vi dig avboka denna bokning och försöka finna kombinationen av cykel och cykelvagn i en annan period.<br>';
 		}
 		$content .= 'Låneperiod: ' . $booking[2] . ':' . $booking[3] . '<br><br>';
+
+
+
+		$content .= 'Elcykeln med tillbehör hämtar du hos Sportson på startdagen. De håller till på Gesällvägen 9B i Birsta. Enklast att ta sig dit är att ta buss nr 2, för att sedan kunna cykla hela vägen tillbaka. Kom ihåg att ta med dig legitimation till Sportson för att kunna hämta ut elcykeln.<br><br>';
+		$content .= 'Du kommer att få skriva under ett låneavtal där du förbinder dig till att föra fram cykeln enligt rådande trafikregler samt att du ansvarar för elcykeln och dess tillbehör under hela låneperioden. En genomgång om hur cykeln fungerar kommer du också att få på plats.<br><br>';
+		$content .= ' Några tips inför och under låneperioden:<br>';
+		$content .= '- Lås gärna fast cykeln med hjälp av ett bygel- eller vajerlås i ram och annat fast föremål. På så sätt är det svårare för någon att plocka med sig cykeln.<br>';
+		$content .= '- Ta med batteriet in då cykeln lämnas ute under en längre period, exempelvis utanför arbetet eller hemmet. Cyklarna är inte lika eftertraktade utan batteri.<br><br>';
+		$content .= ' Om du får förhinder och inte kan hämta ut din cykel som planerat vill vi att du avbokar den. Du hittar avbokningslänken längre ner i detta meddelande.<br>';
+		$content .= ' Vi hoppas att du kommer att få två härliga veckor i cykelsadeln. Vi kontaktar dig efter avslutad låneperiod för att höra hur det gått.<br><br>';
 		$content .= sprintf( __( '<a href="%s">Klicka här för att avboka din elcykel</a>.', 'bikebooking_textdomain' ), $booking_cancel_url);
 
 
@@ -427,14 +444,15 @@ class Sk_Bike_Booking_Public {
 		$taxonomy = 'bike-attributes';
 		$terms = wp_get_post_terms( $post_id, $taxonomy );
 
-		end( $terms );
-		$last = key( $terms );
-
 		if(!empty( $terms )) : ?>
-			<span>Egenskaper: </span>
-			<?php foreach ($terms as $key => $term ) : ?>
-				<?php echo $last !== $key ? $term->name. ',' :  $term->name; ?>
-			<?php endforeach; ?>
+			<div class="bike-info__attributes">
+				<span><?php _e( 'Egenskaper:', 'bikebooking_textdomain' ); ?> </span>
+				<ul>
+				<?php foreach ($terms as $key => $term ) : ?>
+					<li><?php echo $term->name; ?></li>
+				<?php endforeach; ?>
+				</ul>
+			</div>
 		<?php endif;
 
 
@@ -639,7 +657,7 @@ class Sk_Bike_Booking_Public {
 		$subject = 'Bokningsförfrågan av elcykel';
 
 		$body    = 'Tack för din bokningsförfrågan. <br><br>';
-		$body    .= 'För att bekräfta din bokning behöver du klicka på den bifogade länken och följa instruktionerna. Vi vill förtydliga att bokningen inte är reserverad och ej heller giltig förrän du erhållit ett bokningsnummer.<br><br>';
+		$body    .= 'För att bekräfta din bokning behöver du klicka på den bifogade länken och följa instruktionerna. Vi vill förtydliga att bokningen ej är reserverad och inte heller giltig förrän du erhållit ett bokningsnummer.<br><br>';
 		$body    .= sprintf( __( '<a href="%s">Klicka här för att bekräfta din bokning</a>', 'bikebooking_textdomain' ), $booking_url );
 
 		$headers = implode( "\r\n", $this->email_headers );
