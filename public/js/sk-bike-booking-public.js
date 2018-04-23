@@ -35,6 +35,7 @@
 
         $('.bike-book-collapse').on('shown.bs.collapse', function () {
             $(this).prev('.bike-info').find('.btn').addClass('open').text('Avbryt');
+            $(this).find('.booker-email').focus();
         });
 
         $('.bike-book-collapse').on('hidden.bs.collapse', function () {
@@ -51,6 +52,7 @@
 
         $('.bikebooking-period .accessorie-info .btn').on('click', function () {
             var accessorie = $(this).closest('.accessorie-info');
+            $(this).closest('.bike-book-collapse').find('.booker-email').focus();
             $('.selected-accessorie').empty();
 
             if ($(this).hasClass('remove')) {
@@ -73,17 +75,18 @@
 
 
         $('.book-a-bike').on('click', function () {
+            var trigger_btn = $(this);
             var elm = $(this).closest('.alert');
             elm.find('.error-message').remove();
 
-            console.log($(this).closest('.bike-book-collapse').find('.booker-email').val());
-            console.log($(this).data('bike'));
-            console.log($(this).data('period'));
+            //console.log($(this).closest('.bike-book-collapse').find('.booker-email').val());
+            //console.log($(this).data('bike'));
+            //console.log($(this).data('period'));
 
             var accessorie_id = $(this).closest('.bike-book-collapse').find('.selected-accessorie .btn').data('accessorie');
-            console.log(accessorie_id);
+            //console.log(accessorie_id);
 
-
+            //console.log(trigger_btn);
             var data = {
                 action: 'book_bike',
                 booker_email: $(this).closest('.bike-book-collapse').find('.booker-email').val(),
@@ -97,16 +100,15 @@
 
             $.post(ajax_object.ajaxurl, data, function (response) {
 
-                console.log(response);
+                //console.log(response);
                 //console.log(data);
                 //console.log(this);
 
 
                 if( typeof response.error !== 'undefined' ){
-                    console.log('dddd');
                     elm.find('form').prepend('<div class="alert alert-inner error-message"><b>Felmeddelande: </b> ' +response.error+'</div>');
-
                 }else{
+                    elm.closest('.bike').find('.btn.open').remove();
                     elm.empty();
                     elm.append('<div class="alert alert-inner">');
                     elm.find('.alert-inner').append('<p>Tack för din bokningsförfrågan!</p>');
