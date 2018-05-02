@@ -47,12 +47,10 @@ class Sk_Bike_Booking_Activator {
 		}
 
 		// adding cap to editor.
-		/*
 		$role = get_role( 'editor' );
 		foreach ( $caps as $cap => $value ) {
 			$role->add_cap( $cap );
 		}
-		*/
 
 	}
 

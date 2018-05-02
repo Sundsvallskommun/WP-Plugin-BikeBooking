@@ -36,7 +36,7 @@ class Sk_Bike_Booking_Deactivator {
 	public static function remove_role(){
 
 		// remove the custom role
-		remove_role( 'digitalboard_manager' );
+		remove_role( 'bikebooking_manager' );
 
 		$caps = Sk_Bike_Booking_Admin::get_caps();
 
@@ -47,12 +47,10 @@ class Sk_Bike_Booking_Deactivator {
 		}
 
 		// remove custom caps from editor
-		/*
 		$role = get_role( 'editor');
 		foreach ( $caps as $cap => $value ) {
 			$role->remove_cap( $cap );
 		}
-		*/
 
 
 	}
