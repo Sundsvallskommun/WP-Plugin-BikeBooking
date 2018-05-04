@@ -17,15 +17,15 @@ $bikes = Sk_Bike_Booking_Public::get_bikes();
 
 <div class="sk-collapse bikebooking-period">
 	<h2>
-		<a data-toggle="collapse" href="#temp<?php echo $i; ?>" aria-expanded="false"
-		   aria-controls="temp<?php echo $i; ?>" class="collapsed">
+		<a data-toggle="collapse" href="#period<?php echo $i; ?>" aria-expanded="false"
+		   aria-controls="period<?php echo $i; ?>" class="collapsed">
 			<?php printf(__('%s st tillgängliga cyklar %s', 'bikebooking_textdomain'), Sk_Bike_Booking_Public::sum_of_bikes_available( $period_start, $period_end ), 'v' . date( 'W', strtotime( $period_start ) ) . ' - v' . date( 'W', strtotime( $period_end ) ) ); ?>
 			<span class="date-period">
 				<?php printf(__('%s till %s', 'bikebooking_textdomain'), date_i18n( 'l j F Y', strtotime( $period_start ) ), date_i18n( 'l j F', strtotime( $period_end ) ) ); ?>
 			</span>
 		</a>
 	</h2>
-	<div class="collapse" id="temp<?php echo $i; ?>" aria-expanded="false" style="/*height: 0px;*/">
+	<div class="collapse" id="period<?php echo $i; ?>" aria-expanded="false" style="/*height: 0px;*/">
 		<div class="bike-period">
 			<?php if ( Sk_Bike_Booking_Public::sum_of_bikes_available( $period_start, $period_end ) === 0 ) : ?>
 				<p><?php _e( 'Det finns inga tillgängliga cyklar för denna period.', 'bikebooking_textdomain' ); ?></p>
