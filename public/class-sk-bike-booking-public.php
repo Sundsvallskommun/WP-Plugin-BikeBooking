@@ -673,7 +673,6 @@ class Sk_Bike_Booking_Public {
 	 */
 	public static function is_accessorie_available( $accessorie_id, $period_start, $period_end ){
 		global $wpdb;
-
 		$period = $period_start . ':' . $period_end;
 
 		$result = $wpdb->get_var( $wpdb->prepare( "
@@ -683,8 +682,7 @@ class Sk_Bike_Booking_Public {
 		 		WHERE 1=1 
 		 		AND posts.post_type = 'bikebooking' AND posts.post_status = 'publish'
 		 		AND meta1.meta_key = 'bb-accessorie-id' AND meta1.meta_value = '%s'
-		 		AND meta2.meta_key = 'bb-period' AND meta2.meta_value = '%s'
-		 	GROUP BY posts.ID;
+		 		AND meta2.meta_key = 'bb-period' AND meta2.meta_value = '%s';
 		", $accessorie_id, $period ) );
 
 		if( $result === null ){
