@@ -117,6 +117,13 @@ class Sk_Bike_Booking_Public {
 			</div>
 		<?php endif;?>
 
+		<?php if ( isset( $_GET['status'] ) && $_GET['status'] === 'session-expired' ) : ?>
+			<div class="bikebooking-status">
+				<h1 class="single-post__title"><?php _e( 'Sessionen har utgått', 'bikebooking_textdomain' ); ?></h1>
+				<p><?php _e( 'Sessionen på 24 timmar för att bekräfta din bokning har gått ut. Du behöver göra en ny bokningsförfrågan och klicka på bekräftelselänken inom 24 timmar för att din bokning ska bli bekräftad.', 'bikebooking_textdomain' ); ?></p>
+			</div>
+		<?php endif;?>
+
 		<?php
 	}
 
@@ -131,7 +138,6 @@ class Sk_Bike_Booking_Public {
 	 */
 	public function book_cancel( $hash ){
 		global $wpdb;
-		echo $hash;
 
 		$booking_id = $wpdb->get_var( $wpdb->prepare( "
 			SELECT DISTINCT post_id FROM $wpdb->postmeta WHERE meta_key= 'bb-hash' AND meta_value = %s;
@@ -165,13 +171,14 @@ class Sk_Bike_Booking_Public {
 		$transient = get_transient( 'bikebooking_' . $hash );
 
 		if( empty( $transient ) ){
-			error_log('Bike booking: transient is missing or not valid');
-			return false;
+			error_log( 'Bike booking: transient has expired for hash: ' . $hash );
+			wp_redirect( get_post_type_archive_link('bikebooking') . '?status=session-expired' );
+			exit();
+
+		}else{
+			$this->book_insert( $transient );
 		}
-
-		$this->book_insert( $transient );
-
-
+		
 	}
 
 	/**
@@ -731,7 +738,7 @@ class Sk_Bike_Booking_Public {
 
 		// save transient
 		$hash = base64_encode( $booker['email'] . ':' . $bike_id . ':' . $bike_period . ':' . $accessorie_id . ':' . $booker['name'] . ':' . $booker['phone'] . ':' . time() );
-		set_transient( 'bikebooking_' . $hash, $hash, 60 * 60 );
+		set_transient( 'bikebooking_' . $hash, $hash, 60 * 60 * 24 );
 
 		$booking_url = get_bloginfo('url') . '/?bikebooking=confirm&ref=' . $hash;
 
@@ -739,7 +746,7 @@ class Sk_Bike_Booking_Public {
 		$subject = 'Bokningsförfrågan av elcykel';
 
 		$body    = 'Tack för din bokningsförfrågan. <br><br>';
-		$body    .= 'För att bekräfta din bokning behöver du klicka på den bifogade länken och följa instruktionerna. Vi vill förtydliga att bokningen ej är reserverad och inte heller giltig förrän du erhållit ett bokningsnummer.<br><br>';
+		$body    .= 'För att bekräfta din bokning behöver du klicka på den bifogade länken och följa instruktionerna. Länken är giltig i 24 timmar och vi vill förtydliga att bokningen ej är reserverad och inte heller giltig förrän du erhållit ett bokningsnummer.<br><br>';
 		$body    .= sprintf( __( '<a href="%s">Klicka här för att bekräfta din bokning</a>', 'bikebooking_textdomain' ), $booking_url );
 		$body    .= self::get_email_signature();
 
