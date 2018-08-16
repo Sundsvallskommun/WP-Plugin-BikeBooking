@@ -75,8 +75,31 @@ class Sk_Bike_Booking_Public {
 
 		if ( isset( $_GET['bikebooking'] ) && $_GET['bikebooking'] === 'cancel' ) {
 			if(isset($_GET['ref'])){
-				$this->book_cancel( $_GET['ref'] );
+
+				if (session_status() == PHP_SESSION_NONE) {
+					session_start();
+				}
+				$_SESSION['bb_ref'] = $_GET['ref'];
+
+				wp_redirect( get_post_type_archive_link('bikebooking') . '?status=confirm_cancel');
+				exit();
+
 			}
+		}
+
+
+		if ( isset( $_POST['action'] ) && $_POST['action'] === 'bb_cancel' ) {
+			$hash = explode( ':', base64_decode( $_POST['booker_ref'] ) );
+			unset( $_SESSION['bb_ref'] );
+
+			if( $_POST['booker_email'] === $hash[0] ){
+				$this->book_cancel( $_POST['booker_ref'] );
+			}
+
+			wp_redirect( get_post_type_archive_link( 'bikebooking' ) . '?status=uncanceled' );
+			exit();
+
+
 		}
 
 	}
@@ -103,12 +126,40 @@ class Sk_Bike_Booking_Public {
 				</div>
 			<?php endif;?>
 
+		<?php if ( isset( $_GET['status'] ) && $_GET['status'] === 'confirm_cancel' ) : ?>
+			<div class="bikebooking-status">
+				<h1 class="single-post__title"><?php _e( 'Du behöver bekräfta din avbokning', 'bikebooking_textdomain' ); ?></h1>
+				<p><?php _e( 'Ange den e-postadress du angett vid bokning för att avboka din cykel.', 'bikebooking_textdomain' ); ?></p>
+				<div class="col-md-12">
+				<form method="post" action="">
+					<div class="form-group row">
+						<label for="booker-email"><?php _e( 'E-postadress', 'bikebooking_textdomain' ); ?></label>
+						<input type="email" id="booker-email" name="booker_email" class="booker-email form-control">
+					</div>
+
+					<div class="form-group row text-right">
+						<button type="submit" class="btn btn-primary btn-sm"><?php _e( 'Avboka', 'bikebooking_textdomain' ); ?></button>
+					</div>
+					<input type="hidden" name="booker_ref" value="<?php echo isset( $_SESSION['bb_ref'] ) ? $_SESSION['bb_ref'] : ''; ?>">
+					<input type="hidden" name="action" value="bb_cancel">
+				</form>
+				</div>
+			</div>
+		<?php endif;?>
+
 			<?php if ( isset( $_GET['status'] ) && $_GET['status'] === 'canceled' ) : ?>
 			<div class="bikebooking-status">
 				<h1 class="single-post__title"><?php _e( 'Din bokning är borttagen', 'bikebooking_textdomain' ); ?></h1>
 				<p><?php _e( 'En bekräftelse på din avbokning är skickad till din e-postadress.', 'bikebooking_textdomain' ); ?></p>
 			</div>
 			<?php endif;?>
+
+		<?php if ( isset( $_GET['status'] ) && $_GET['status'] === 'uncanceled' ) : ?>
+			<div class="bikebooking-status">
+				<h1 class="single-post__title"><?php _e( 'Fel vid avbokning', 'bikebooking_textdomain' ); ?></h1>
+				<p><?php _e( 'Din bokning gick ej att avboka, prova igen genom att klicka på länken i e-postmeddelandet och kontrollera att du anger rätt e-postadress vid avbokning.', 'bikebooking_textdomain' ); ?></p>
+			</div>
+		<?php endif;?>
 
 		<?php if ( isset( $_GET['status'] ) && $_GET['status'] === 'bike-unavailable' ) : ?>
 			<div class="bikebooking-status">
@@ -138,9 +189,8 @@ class Sk_Bike_Booking_Public {
 	 */
 	public function book_cancel( $hash ){
 		global $wpdb;
-
 		$booking_id = $wpdb->get_var( $wpdb->prepare( "
-			SELECT DISTINCT post_id FROM $wpdb->postmeta WHERE meta_key= 'bb-hash' AND meta_value = %s;
+			SELECT DISTINCT post_id FROM $wpdb->postmeta WHERE meta_key = 'bb-hash' AND meta_value = %s;
 			", $hash ) );
 
 		if(empty($booking_id)){
@@ -178,7 +228,7 @@ class Sk_Bike_Booking_Public {
 		}else{
 			$this->book_insert( $transient );
 		}
-		
+
 	}
 
 	/**
@@ -924,6 +974,8 @@ class Sk_Bike_Booking_Public {
 				'ajax_nonce' => wp_create_nonce( 'ajax_nonce' )
 			)
 		); // setting ajaxurl and nonce
+
+
 
 	}
 
