@@ -322,7 +322,7 @@ class Sk_Bike_Booking_Public {
 
 
 
-		$content .= 'Elcykeln med tillbehör hämtar du hos Sportson på startdagen. De håller till på Gesällvägen 9B i Birsta. Enklast att ta sig dit är att ta buss nr 2, för att sedan kunna cykla hela vägen tillbaka. Kom ihåg att ta med dig legitimation till Sportson för att kunna hämta ut elcykeln.<br><br>';
+		$content .= 'Elcykeln med tillbehör hämtar du hos Sportson på startdagen. Observera att du hämtar ut elcykeln måndag och återlämnar den fredagen veckan därpå (så lånet är knappt 2 veckor). Om du önskar andra dagar måste du själv kontakta Sportson och kolla att det är ok, de har telefonnummer 060-166080. De håller till på Gesällvägen 9B i Birsta. Enklast att ta sig dit är att ta buss nr 2, för att sedan kunna cykla hela vägen tillbaka. Kom ihåg att ta med dig legitimation till Sportson för att kunna hämta ut elcykeln.<br><br>';
 		$content .= 'Du kommer att få skriva under ett låneavtal där du förbinder dig till att föra fram cykeln enligt rådande trafikregler samt att du ansvarar för elcykeln och dess tillbehör under hela låneperioden. En genomgång om hur cykeln fungerar kommer du också att få på plats.<br><br>';
 		$content .= ' Några tips inför och under låneperioden:<br>';
 		$content .= '- Lås gärna fast cykeln med hjälp av ett bygel- eller vajerlås i ram och annat fast föremål. På så sätt är det svårare för någon att plocka med sig cykeln.<br>';
