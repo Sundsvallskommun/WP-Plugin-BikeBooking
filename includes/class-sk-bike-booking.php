@@ -178,6 +178,8 @@ class Sk_Bike_Booking {
 		$this->loader->add_filter( 'manage_bikebooking_posts_columns', $plugin_admin, 'custom_admin_columns' );
 		$this->loader->add_action( 'manage_bikebooking_posts_custom_column', $plugin_admin, 'custom_admin_column', 10, 2 );
 
+		$this->loader->add_action( 'save_post_bikebooking', $plugin_admin, 'save_post', 10, 1 );
+
 
 	}
 

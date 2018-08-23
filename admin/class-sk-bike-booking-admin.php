@@ -226,6 +226,7 @@ class Sk_Bike_Booking_Admin {
 	 * @param $post
 	 */
 	function booking_confirm_meta_box_output( $post ){
+		echo '<h3><i>! Observera att cykeln som står angiven i bekräftelsen nedan kan ha ändrats. Se panelen "Uppgifter om låntagare" för korrekt cykel.</i></h3>';
 		echo '<div>'.$post->post_content.'</div>';
 	}
 
@@ -242,10 +243,39 @@ class Sk_Bike_Booking_Admin {
 			<p><span>Namn:</span> <?php echo get_post_meta( $post->ID, 'bb-name', true);?></p>
 			<p><span>Telefonnummer:</span> <?php echo get_post_meta( $post->ID, 'bb-phone', true);?></p>
 			<p><span>E-postadress:</span> <?php echo get_post_meta( $post->ID, 'bb-email', true);?></p>
+			<p><span>Cykel:</span> <?php echo get_post_meta( $post->ID, 'bb-bike-id', true);?> (<?php echo get_the_title( get_post_meta( $post->ID, 'bb-bike-id', true) );?>)</p>
+
+			<p>
+				<label for="bb_bike_id"><?php _e( 'Ändra cykel ID: ', 'bikebooking_textdomain' ); ?></label>
+				<input type="number" name="bb_bike_id" id="bb_bike_id" class="" value="<?php echo get_post_meta( $post->ID, 'bb-bike-id', true);?>">
+				<span class="description">Välj någon av de cyklar som finns tillgängliga nedan. Ange enbart siffror.</span>
+			</p>
+
+			<?php
+				$bikes = Sk_Bike_Booking_Public::get_bikes();
+				$period = get_post_meta( $post->ID, 'bb-period', true);
+				$period = explode(':', $period );
+			?>
+			<?php if(!empty($bikes)) : ?>
+				<p><strong>Tillgängliga cyklar</strong></p>
+				<?php foreach ($bikes as $bike)  : ?>
+					<?php if ( Sk_Bike_Booking_Public::is_bike_available( $bike->ID, $period[0], $period[1] ) ) : ?>
+						<?php printf( 'Cykel ID: %s (%s)', $bike->ID, get_the_title( $bike->ID )); ?><br>
+					<?php endif; ?>
+				<?php endforeach; ?>
+			<?php endif; ?>
 		</div>
 	<?php
 	}
 
+
+	public function save_post( $post_id ) {
+
+		if ( isset( $_POST['bb_bike_id'] ) ) {
+			update_post_meta( $post_id, 'bb-bike-id', sanitize_text_field( $_POST['bb_bike_id'] ) );
+		}
+
+	}
 
 	/**
 	 * Adding custom column to wp admin list.
@@ -263,8 +293,7 @@ class Sk_Bike_Booking_Admin {
 				case 'date' :
 					unset( $columns['date'] );
 					$custom_columns['bb_period'] = __( 'Period', 'bikebooking_textdomain' );
-					//$custom_columns['end_date'] = __( 'Tas ned', 'digitalboard_textdomain' );
-
+					$custom_columns['bb_bike_id'] = __( 'Cykel', 'bikebooking_textdomain' );
 					break;
 			}
 
@@ -291,12 +320,15 @@ class Sk_Bike_Booking_Admin {
 				$bb_period = get_post_meta( $post_id, 'bb-period', true );
 				echo !empty( $bb_period ) ? $bb_period : null;
 				break;
-/*
-			case 'end_date' :
-				$type = get_field( 'digitalboard_date_down', $post_id);
-				echo !empty( $type ) ? $type : null;
+
+			case 'bb_bike_id' :
+				$bb_bike_id = get_post_meta( $post_id, 'bb-bike-id', true );
+				if(!empty( $bb_bike_id )){
+					$bike = get_the_title( $bb_bike_id );
+				}
+
+				echo ! empty( $bb_bike_id ) ? $bike . ' (ID: ' . $bb_bike_id . ')' : null;
 				break;
-*/
 		}
 	}
 
