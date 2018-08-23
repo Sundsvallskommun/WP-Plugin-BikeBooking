@@ -16,7 +16,7 @@
  * Plugin Name:       SK Bike Booking
  * Plugin URI:        https://github.com/Sundsvallskommun/WP-Plugin-BikeBooking
  * Description:       Hanterar bokning av elcyklar.
- * Version:           1.0.0
+ * Version:           1.2.0
  * Author:            Daniel Pihlström
  * Author URI:        http://cybercom.com
  * License:           GPL-2.0+
