@@ -72,7 +72,7 @@ class Sk_Bike_Booking_Admin {
 					'add_new_item'  => __( 'Skapa ny bokning', 'sk_tivoli' ),
 					'edit_item'     => __( 'Redigera bokning', 'sk_tivoli' ),
 				),
-				'public'               => true,
+				'public'               => false,
 				'show_ui'              => true,
 				'menu_position'        => 6,
 				'menu_icon'            => 'dashicons-list-view',
