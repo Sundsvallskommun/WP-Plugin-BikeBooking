@@ -241,10 +241,10 @@ class Sk_Bike_Booking_Public {
 	private static function get_email_signature(){
 		$signature = '<br><br>';
 		$signature .= 'Vänliga hälsningar<br><br>';
-		$signature .= 'Johanna Keil<br>';
+		$signature .= 'Angelica Lindqvist<br>';
 		$signature .= 'Projektledare för Hållbart resande<br>';
 		$signature .= 'Gatuavdelningen<br>';
-		$signature .= 'Telefon: 060-191587<br>';
+		$signature .= 'Telefon: 060-19 15 39<br>';
 		$signature .= 'E-post: nyavagarfram@sundsvall.se<br><br>';
 		$signature .= 'Sundsvalls kommun<br>';
 		$signature .= '851 85 Sundsvall<br>';
