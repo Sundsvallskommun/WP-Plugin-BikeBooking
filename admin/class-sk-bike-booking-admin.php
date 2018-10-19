@@ -55,6 +55,26 @@ class Sk_Bike_Booking_Admin {
 	}
 
 
+		
+	/**
+	 * Adding settings page ACF
+	 *
+	 * @author Daniel Pihlström <daniel.pihlstrom@cybercom.com>
+	 *
+	 */
+	public function add_options_page() {
+		if ( function_exists( 'acf_add_options_sub_page' ) ) {
+			acf_add_options_sub_page( array(
+				'title' => __( 'Inställningar cykelbokning', 'bikebooking_textdomain' ),
+				'parent'     => 'edit.php?post_type=bike',
+				'capability' => 'edit_pages'
+			) );
+		}
+
+		
+	}
+
+
 	/**
 	 * Register post types.
 	 *
