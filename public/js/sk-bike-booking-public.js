@@ -4,29 +4,6 @@
     /**
      * All of the code for your public-facing JavaScript source
      * should reside in this file.
-     *
-     * Note: It has been assumed you will write jQuery code here, so the
-     * $ function reference has been prepared for usage within the scope
-     * of this function.
-     *
-     * This enables you to define handlers, for when the DOM is ready:
-     *
-     * $(function() {
-	 *
-	 * });
-     *
-     * When the window is loaded:
-     *
-     * $( window ).load(function() {
-	 *
-	 * });
-     *
-     * ...and/or other possibilities.
-     *
-     * Ideally, it is not considered best practise to attach more than a
-     * single DOM-ready or window-load handler for a particular page.
-     * Although scripts in the WordPress core, Plugins and Themes may be
-     * practising this, we should strive to set a better example in our own work.
      */
 
 
@@ -79,19 +56,21 @@
             var elm = $(this).closest('.alert');
             elm.find('.error-message').remove();
 
-            //console.log($(this).closest('.bike-book-collapse').find('.booker-email').val());
-            //console.log($(this).data('bike'));
-            //console.log($(this).data('period'));
-
             var accessorie_id = $(this).closest('.bike-book-collapse').find('.selected-accessorie .btn').data('accessorie');
-            //console.log(accessorie_id);
+            
 
-            //console.log(trigger_btn);
+            var compliance = false;
+            if ($(this).closest('.bike-book-collapse').find('.booker-compliance').is(':checked')){
+              compliance = true;
+            }
+
+            console.log(compliance);
             var data = {
                 action: 'book_bike',
                 booker_email: $(this).closest('.bike-book-collapse').find('.booker-email').val(),
                 booker_name: $(this).closest('.bike-book-collapse').find('.booker-name').val(),
                 booker_phone: $(this).closest('.bike-book-collapse').find('.booker-phone').val(),
+                booker_compliance: compliance,
                 bike_id: $(this).data('bike'),
                 accessorie_id: accessorie_id,
                 bike_period: $(this).data('period'),
@@ -100,13 +79,14 @@
 
             $.post(ajax_object.ajaxurl, data, function (response) {
 
-                //console.log(response);
+                console.log(response);
                 //console.log(data);
                 //console.log(this);
 
 
                 if( typeof response.error !== 'undefined' ){
                     elm.find('form').prepend('<div class="alert alert-inner error-message"><b>Felmeddelande: </b> ' +response.error+'</div>');
+                    console.log('wh');
                 }else{
                     elm.closest('.bike').find('.btn.open').remove();
                     elm.empty();
