@@ -169,8 +169,8 @@ class Sk_Bike_Booking {
 		$plugin_admin = new Sk_Bike_Booking_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'init', $plugin_admin, 'register_post_type', 10 );
-
 		$this->loader->add_action( 'init', $plugin_admin, 'register_taxonomy', 10 );
+		$this->loader->add_action( 'init', $plugin_admin, 'add_options_page', 10 );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
