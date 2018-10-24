@@ -195,7 +195,6 @@ class Sk_Bike_Booking {
 	private function define_public_hooks() {
 
 		$plugin_public = new Sk_Bike_Booking_Public( $this->get_plugin_name(), $this->get_version() );
-
 		$this->loader->add_action( 'wp', $plugin_public, 'add_shortcode' );
 		$this->loader->add_action( 'wp', $plugin_public, 'book_request' );
 

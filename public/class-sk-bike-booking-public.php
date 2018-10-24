@@ -866,7 +866,10 @@ class Sk_Bike_Booking_Public {
 
         // check for post type
         if ( is_singular( 'bikebooking' ) ) {
-            $single_template = plugin_dir_path( __DIR__ ) . 'templates/single-bikebooking.php';
+			global $wp_query;
+			$wp_query->set_404();
+			status_header(404);
+			get_template_part( 404 ); exit();
         }
 
         return $single_template;
