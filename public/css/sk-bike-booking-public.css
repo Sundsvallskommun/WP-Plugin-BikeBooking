@@ -125,3 +125,7 @@
     border-color: #ffdec7;
     color: inherit;
 }
+
+.bikebooking-period .booker-compliance-text{
+    margin-bottom: 0;
+}

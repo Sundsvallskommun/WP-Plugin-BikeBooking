@@ -169,16 +169,18 @@ class Sk_Bike_Booking {
 		$plugin_admin = new Sk_Bike_Booking_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'init', $plugin_admin, 'register_post_type', 10 );
-
 		$this->loader->add_action( 'init', $plugin_admin, 'register_taxonomy', 10 );
+		$this->loader->add_action( 'init', $plugin_admin, 'add_options_page', 10 );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'export_page', 10, 1 );
 
 		$this->loader->add_filter( 'manage_bikebooking_posts_columns', $plugin_admin, 'custom_admin_columns' );
 		$this->loader->add_action( 'manage_bikebooking_posts_custom_column', $plugin_admin, 'custom_admin_column', 10, 2 );
 
 		$this->loader->add_action( 'save_post_bikebooking', $plugin_admin, 'save_post', 10, 1 );
+		
 
 
 	}
@@ -193,7 +195,6 @@ class Sk_Bike_Booking {
 	private function define_public_hooks() {
 
 		$plugin_public = new Sk_Bike_Booking_Public( $this->get_plugin_name(), $this->get_version() );
-
 		$this->loader->add_action( 'wp', $plugin_public, 'add_shortcode' );
 		$this->loader->add_action( 'wp', $plugin_public, 'book_request' );
 
