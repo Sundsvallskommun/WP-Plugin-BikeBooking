@@ -72,7 +72,7 @@ class Sk_Bike_Booking_Admin {
 	 * @return void
 	 */
     public function export_page() {
-        add_submenu_page( 'edit.php?post_type=bike', __( 'Exportera', 'bikebooking_textdomain' ), __( 'Exportera', 'bikebooking_textdomain' ), 'manage_options', 'export-bookings', array( $this, 'export_page_view' ) );
+        add_submenu_page( 'edit.php?post_type=bike', __( 'Exportera', 'bikebooking_textdomain' ), __( 'Exportera', 'bikebooking_textdomain' ), 'edit_bikes', 'export-bookings', array( $this, 'export_page_view' ) );
     }
 
 	/**
@@ -83,7 +83,7 @@ class Sk_Bike_Booking_Admin {
 	 * @return void
 	 */
     public function export_page_view() {
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( !current_user_can( 'edit_bikes' ) ) {
             wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
         }
         global $wpdb;
@@ -130,7 +130,7 @@ class Sk_Bike_Booking_Admin {
             acf_add_options_sub_page( array(
                 'title' => __( 'Inställningar cykelbokning', 'bikebooking_textdomain' ),
                 'parent' => 'edit.php?post_type=bike',
-                'capability' => 'edit_pages',
+                'capability' => 'edit_bikes',
             ) );
         }
 
