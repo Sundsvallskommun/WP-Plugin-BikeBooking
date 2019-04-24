@@ -382,12 +382,13 @@ class Sk_Bike_Booking_Public {
 
         $atts = shortcode_atts( array(
             'startdatum' => date_i18n( 'Y-m-d' ),
+            'slutdatum' => false,
         ), $atts );
 
         //start buffering
         ob_start();
 
-        $period = self::get_period_interval( $atts['startdatum'] );
+        $period = self::get_period_interval( $atts['startdatum'], $atts['slutdatum'] );
 
         $i = 0;
 
@@ -414,7 +415,7 @@ class Sk_Bike_Booking_Public {
      *
      * @return DatePeriod
      */
-    private function get_period_interval( $startdate ) {
+    private function get_period_interval( $startdate, $enddate = false ) {
 
         // is startdate on odd or even week
         $period_start = 'even';
@@ -451,6 +452,11 @@ class Sk_Bike_Booking_Public {
         $end = new DateTime( $start->format( 'Y-m-d' ) );
         $end->modify( '+ 26 weeks' );
 
+        // if end date is given in shortcode end period 
+        if( $enddate ){
+            $end->modify( $enddate );  
+        }
+    
         $interval = new DateInterval( 'P2W' );
         $period   = new DatePeriod( $start, $interval, $end );
 
